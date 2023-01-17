@@ -18,7 +18,7 @@ public class Elevator extends SubsystemBase {
     // Singleton class, call getInstance to access instead of the constructor.
     public static Elevator getInstance() {
         if (instance == null) {
-            instance = new Intake();
+            instance = new Elevator();
         }
         return instance;
     }
