@@ -23,9 +23,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         return instance;
     }
 
-    public void setPercentOutput(double speed) {
+    public void setPercentOutput(double percent) {
       
-        talon.set(speed); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
+        talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
       
     }
 }
