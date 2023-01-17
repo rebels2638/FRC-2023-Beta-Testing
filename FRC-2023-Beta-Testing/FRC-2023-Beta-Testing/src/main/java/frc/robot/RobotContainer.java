@@ -25,6 +25,7 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevatorController = new Elevator();
+  private final Claw clawController = new Claw();
   
   // The robot's controllers
   private final XboxController xboxDriver;
@@ -47,8 +48,10 @@ public class RobotContainer {
         new Drive(drive, xboxDriver));
     
     this.elevatorController.setDefaultCommand(
-        new ElevatorController(elevatorController, xboxOperator)); // added
-
+        new ElevatorController(elevatorController, xboxOperator)); // added, works
+    
+    this.clawController.setDefaultCommand(
+        new ClawController(clawController, xboxOperator)); // added, untested
   }
 
   /**
