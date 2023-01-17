@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.Drive;
+import frc.robot.commands.ElevatorController;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -22,8 +24,8 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
-  private final Elevator elevatorController = new elevator(); // added
-
+  private final Elevator elevatorController = new Elevator();
+  
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
