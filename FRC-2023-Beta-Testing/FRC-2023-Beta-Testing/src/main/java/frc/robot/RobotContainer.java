@@ -22,6 +22,7 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
+  private final Elevator elevatorController = new elevator(); // added
 
   // The robot's controllers
   private final XboxController xboxDriver;
@@ -42,6 +43,9 @@ public class RobotContainer {
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
+    
+    this.elevatorController.setDefaultCommand(
+        new ElevatorController(elevatorController, xboxOperator)); // added
 
   }
 
