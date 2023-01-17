@@ -32,7 +32,7 @@ public class ElevatorController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.set(e_controller.getLeftY());
+    m_elevatorSubsystem.setPercentOutput(e_controller.getLeftY());
   }
 
   // Called once the command ends or is interrupted.
