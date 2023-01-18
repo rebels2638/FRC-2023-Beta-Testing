@@ -10,7 +10,7 @@ public class Elevator extends SubsystemBase {
 
     private final VictorSPX victor;
     private static Elevator instance = null;
-    private static int lastPercentSpeed; 
+    private static double lastPercentSpeed; 
 
     public Elevator() {
         this.victor = new VictorSPX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
@@ -28,7 +28,8 @@ public class Elevator extends SubsystemBase {
     public void setPercentOutput(double percent) {
       
         if (percent == 0) {percent = lastPercentSpeed;}
-        lastPercentSpeed = percent;
+        
+        else {lastPercentSpeed = percent;}
         
         victor.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
       
