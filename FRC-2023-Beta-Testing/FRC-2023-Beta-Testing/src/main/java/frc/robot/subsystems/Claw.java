@@ -13,7 +13,8 @@ public class Claw extends SubsystemBase {
     
     private final DoubleSolenoid solenoid;
     private boolean state; // push is true, and pull is false
-
+    
+    //void? doesnt have return statement
     public Elevator() {
         // this.victor = new VictorSPX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         
@@ -49,4 +50,5 @@ public class Claw extends SubsystemBase {
       
         solenoid.set(DoubleSolenoid.Value.kForward);
         intakeOut = false;
-}
+    }
+} //you forgot this
