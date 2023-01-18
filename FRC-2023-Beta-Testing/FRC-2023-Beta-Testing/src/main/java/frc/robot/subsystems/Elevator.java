@@ -9,10 +9,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Elevator extends SubsystemBase {
 
     private final VictorSPX victor;
-    private static Elevator instance = null; 
+    private static Elevator instance = null;
+    private static int lastPercentSpeed; 
 
     public Elevator() {
         this.victor = new VictorSPX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
+        lastPercentSpeed = 0;
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
@@ -25,6 +27,9 @@ public class Elevator extends SubsystemBase {
 
     public void setPercentOutput(double percent) {
       
+        if (percent == 0) {percent = lastPercentSpeed;}
+        lastPercentSpeed = percent;
+        
         victor.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
       
     }
