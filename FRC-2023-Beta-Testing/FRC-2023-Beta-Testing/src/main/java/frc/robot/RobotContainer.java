@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivetrain;
-
+import frc.robot.Constants;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -36,8 +36,8 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
-    this.xboxDriver = new XboxController(3);
-    this.xboxOperator = new XboxController(2);
+    this.xboxDriver = new XboxController(Constants.DriveConstants.kXboxDriverPort);
+    this.xboxOperator = new XboxController(Constants.DriveConstants.kXboxOperatorPort);
 
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
