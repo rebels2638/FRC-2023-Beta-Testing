@@ -4,6 +4,7 @@ package frc.robot.Sims;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -64,7 +65,9 @@ public class SimpleDifferentialDriveSim extends TimedRobot {
 
     private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
-     private Drivetrain m_drivetrain = new Drivetrain();
+
+    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+
 
 
     
@@ -94,20 +97,20 @@ public class SimpleDifferentialDriveSim extends TimedRobot {
 
          SmartDashboard.putData("Field", m_fieldSim);
        }
-        /* FEED FORWARD IS NOT SET UP YET*/
+        /* FEED FORWARD IS NOT SET UP YET */
         //m_leftGroup.setVoltage(leftOutput +leftFeedforward);
         //m_rightGroup.setVoltage(rightOutput + rightFeedForward);
 
         public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-         // var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
-         // var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+         var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+         var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
           double leftOutput =
               m_leftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
           double rightOutput =
               m_rightPIDController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
       
-          m_leftGroup.setVoltage(leftOutput /*+ leftFeedforward*/);
-          m_rightGroup.setVoltage(rightOutput/*+ rightFeedforward*/);
+          m_leftGroup.setVoltage(leftOutput + leftFeedforward);
+          m_rightGroup.setVoltage(rightOutput + rightFeedforward);
        }
 
        public void drive(double xSpeed, double rot){

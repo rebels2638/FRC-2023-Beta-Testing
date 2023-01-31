@@ -4,10 +4,18 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 import frc.robot.Sims.SimpleDifferentialDriveSim;
 
 /**
@@ -22,7 +30,7 @@ public class Robot extends TimedRobot {
   //private final SimpleDifferentialDriveSim m_drive = new SimpleDifferentialDriveSim();
   
   private RobotContainer m_robotContainer;
-
+ // private Trajectory m_trajectory;
   private Timer time;
 
   /**
@@ -34,6 +42,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all 
     m_robotContainer = new RobotContainer();
     time = new Timer();
+    //m_trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(2, 2, new Rotation2d()), List.of(), new Pose2d(6, 4, new Rotation2d()), new TrajectoryConfig(2,2));
   }
 
   /**
@@ -64,7 +73,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     time.reset();
     time.start();
-    
+    //m_drive.resetOdometry(m_trajectory.getInitialPOse());
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
