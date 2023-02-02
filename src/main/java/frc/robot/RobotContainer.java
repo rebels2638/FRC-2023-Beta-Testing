@@ -36,7 +36,7 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   // private final ElevatorPID elevatorPID = new ElevatorPID();
   private final Claw claw = new Claw();
-  private final SimpleDifferentialDriveSim driveSim = new SimpleDifferentialDriveSim(); 
+ // private final SimpleDifferentialDriveSim driveSim = new SimpleDifferentialDriveSim(); 
   
   // The robot's controllers
   private final XboxController xboxDriver;
