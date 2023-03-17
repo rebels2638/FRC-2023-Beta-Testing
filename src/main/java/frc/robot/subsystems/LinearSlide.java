@@ -22,6 +22,8 @@ public class LinearSlide extends SubsystemBase {
     private static final double kMaxEncoderLimit = 10000000;
     private static final double kMinEncoderLimit = -10000000;
 
+    private static boolean encoderLimitsEnabled = true;
+
     private ShuffleboardTab tab;
     private double kG = 0;
     private final GenericEntry linSlideEncoderPosition;
@@ -60,12 +62,13 @@ public class LinearSlide extends SubsystemBase {
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
         
-        if (getCurrentEncoderPosition() >= kMaxEncoderLimit && m_setpoint > 0.0) {
-            m_setpoint = 0.0;
-        } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && m_setpoint < 0.0) {
-            m_setpoint = 0.0;
+        if (encoderLimitsEnabled) {
+            if (getCurrentEncoderPosition() >= kMaxEncoderLimit && m_setpoint > 0.0) {
+                m_setpoint = 0.0;
+            } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && m_setpoint < 0.0) {
+                m_setpoint = 0.0;
+            }
         }
-        
         m_linslide.set(ControlMode.PercentOutput, m_setpoint * (inverted ? -1 : 1));
 
     }
@@ -76,5 +79,13 @@ public class LinearSlide extends SubsystemBase {
 
     public void zeroEncoder() {
         m_linslide.setSelectedSensorPosition(0);
+    }
+
+    public void disableEncoderLimits(){
+        encoderLimitsEnabled = false;
+    }
+
+    public void enableEncoderLimits(){
+        encoderLimitsEnabled = true;
     }
 }

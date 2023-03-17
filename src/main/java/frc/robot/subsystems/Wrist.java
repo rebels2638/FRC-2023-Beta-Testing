@@ -62,6 +62,8 @@ public class Wrist extends SubsystemBase {
     private static double kUpperLimit = 110000.0;
     private static double kLowerLimit = -44900.0;
 
+    private static boolean encoderLimitsEnabled = true;
+
     private final ShuffleboardTab tab;
 
 
@@ -118,6 +120,15 @@ public class Wrist extends SubsystemBase {
         
     }
     
+    public void disableEncoderLimits(){
+        encoderLimitsEnabled = false;
+    }
+
+    public void enableEncoderLimits(){
+        encoderLimitsEnabled = true;
+    }
+
+
     public double nativeToRad(double encoderUnits) {
         return encoderUnits * kRotationsPerNativeUnit * kRadiansPerRotation;
     }
@@ -205,10 +216,13 @@ public class Wrist extends SubsystemBase {
         // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
 
         double voltage = RebelUtil.constrain(pid, -12.0, 12.0);
-        if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
-            voltage = 0.0;
-        } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
-            voltage = 0.0;
+
+        if (encoderLimitsEnabled) {
+            if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
+                voltage = 0.0;
+            } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
+                voltage = 0.0;
+            }
         }
         System.out.println(getCurrentAngle());
         m_voltageSetpoint = voltage;

@@ -70,15 +70,18 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private final GenericEntry elevatorAccelerationSetpoint;
     private final GenericEntry voltageSupplied;
     private final GenericEntry voltageSetpoint;
+    private static boolean encoderLimitsEnabled = true;
 
     public ElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
         m_motor2.setInverted(false);
-
+        
         // reset elevator
         m_motor1.setNeutralMode(NeutralMode.Brake);
         m_motor2.setNeutralMode(NeutralMode.Brake);
         zeroEncoder();
+
+        
 
         m_motor1.set(ControlMode.PercentOutput, 0);
         m_motor2.set(ControlMode.PercentOutput, 0);
@@ -191,13 +194,15 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
         System.out.println("VOLTAGE " + voltage);
-        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
-            voltage = ElevatorConstants.kG;
 
-        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
-            voltage = 0.0;
+        if (encoderLimitsEnabled) {
+            if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
+                voltage = ElevatorConstants.kG;
+
+            } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+                voltage = 0.0;
+            }
         }
-
         // System.out.println("Elevator : " + voltage);
         m_voltageSetpoint = RebelUtil.constrain(voltage,-12, 12);
         m_motor1.setVoltage(m_voltageSetpoint);
@@ -211,5 +216,13 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     public void breakMotor() {
         m_motor1.stopMotor();
         m_motor2.stopMotor();
+    }
+
+    public void disableEncoderLimits(){
+        encoderLimitsEnabled = false;
+    }
+
+    public void enableEncoderLimits(){
+        encoderLimitsEnabled = true;
     }
 }

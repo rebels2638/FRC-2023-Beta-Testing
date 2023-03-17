@@ -53,6 +53,7 @@ import frc.robot.commands.ElevatorDownLinSlideIn;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinearSlideController;
+import frc.robot.commands.ToggleEncoderLimits;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.subsystems.LinSlidePID;
@@ -84,6 +85,7 @@ public class RobotContainer {
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
   private final Wrist wrist = new Wrist();
   private final Claw claw = Claw.getInstance();
+  private final ToggleEncoderLimits toggleEnocderLimits = new ToggleEncoderLimits(wrist, elevatorFinal, linslide);
 
   
   // private final Drivetrain drive = new Drivetrain();
@@ -218,6 +220,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
     Shuffleboard.getTab("Auto").add("Command", chooser);
     Shuffleboard.getTab("Auto").add("Path", pathChooser);
+    Shuffleboard.getTab("Encoders").add("Toggle Encoder Limits", new InstantCommand( () -> toggleEnocderLimits.toggle()));
   }
 
   /**
