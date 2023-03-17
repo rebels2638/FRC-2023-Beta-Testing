@@ -24,6 +24,7 @@ import frc.robot.commands.ElevatorController;
 // import frc.robot.commands.ArmUp;
 import frc.robot.commands.Auto;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.AutoClawClose;
 // import frc.robot.subsystems.ArmPID;
 // import frc.robot.commands.ArmPIDController;
 import frc.robot.commands.ElevatorDown;
@@ -84,6 +85,7 @@ public class RobotContainer {
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
   private final Wrist wrist = new Wrist();
   private final Claw claw = Claw.getInstance();
+  private final AutoClawClose autoClawClose = new AutoClawClose(claw);
 
   
   // private final Drivetrain drive = new Drivetrain();
@@ -143,6 +145,8 @@ public class RobotContainer {
 
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
+
+    this.xboxOperator.getRightDpad().toggleOnTrue(new InstantCommand(() -> this.autoClawClose.toggle()));
 
     // this.linslide.setDefaultCommand(new LinearSlideController(linslide,
     // xboxOperator));
