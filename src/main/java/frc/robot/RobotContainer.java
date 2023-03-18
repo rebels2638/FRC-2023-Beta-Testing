@@ -41,6 +41,7 @@ import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Camera;
 // import frc.robot.commands.PositionPresets;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
@@ -86,6 +87,7 @@ public class RobotContainer {
   private final Wrist wrist = new Wrist();
   private final Claw claw = Claw.getInstance();
   private final AutoClawClose autoClawClose = new AutoClawClose(claw);
+  private final Camera camera = new Camera();
 
   
   // private final Drivetrain drive = new Drivetrain();
