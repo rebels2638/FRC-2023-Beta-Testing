@@ -6,7 +6,9 @@ package frc.robot.subsystems;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -45,6 +47,7 @@ public class PoseEstimator extends SubsystemBase {
     private Pose2d currentPose = new Pose2d();
     private double[] botPose;
 
+    private PhotonCameraWrapper photonCameraWrapper = new PhotonCameraWrapper();
     private static final List<Pose3d> targetPoses = Collections
     .unmodifiableList(List.of(new Pose3d(0, 0, 0, new Rotation3d(0, 0,
     degreesToRadians(180))),
@@ -85,38 +88,50 @@ public class PoseEstimator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        boolean hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getBoolean(false);
-        if (hasTarget) {
-            botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose")
-                    .getDoubleArray(new double[6]);
-            Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), new Rotation2d(botPose[5]));
+        // boolean hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getBoolean(false);
+        // if (hasTarget) {
+        //     botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose")
+        //             .getDoubleArray(new double[6]);
+        //     Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), new Rotation2d(botPose[5]));
 
-            // scale accuracy by distance to apriltag? (actually maybe not since our regular odom is screwed anyways)
-            poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (botPose[6] / 1000.0));
-        }
+        //     // scale accuracy by distance to apriltag? (actually maybe not since our regular odom is screwed anyways)
+        //     poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (botPose[6] / 1000.0));
+        // }
 
         // Add apriltag through photonlib
-        var pipelineResult = photonCamera.getLatestResult();
-        var resultTimestamp = pipelineResult.getTimestampSeconds();
-        if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
-            previousPipelineTimestamp = resultTimestamp;
-            var target = pipelineResult.getBestTarget();
-            var fiducialId = target.getFiducialId();
-            if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < targetPoses.size()) {
-                var targetPose = targetPoses.get(fiducialId);
-                Transform3d camToTarget = target.getBestCameraToTarget();
-                Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
+        // var pipelineResult = photonCamera.getLatestResult();
+        // var resultTimestamp = pipelineResult.getTimestampSeconds();
+        // if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
+        //     previousPipelineTimestamp = resultTimestamp;
+        //     var target = pipelineResult.getBestTarget();
+        //     var fiducialId = target.getFiducialId();
+        //     if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < targetPoses.size()) {
+        //         var targetPose = targetPoses.get(fiducialId);
+        //         Transform3d camToTarget = target.getBestCameraToTarget();
+        //         Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
 
-                Pose3d visionMeasurment = camPose.transformBy(camToTarget);
-                poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
-            }
+        //         Pose3d visionMeasurment = camPose.transformBy(camToTarget);
+        //         poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
+        //     }
+
+        poseEstimator.update(
+            m_gyro.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
+
+        Optional<EstimatedRobotPose> result =
+            photonCameraWrapper.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+
+    if (result.isPresent()) {
+        EstimatedRobotPose camPose = result.get();
+        poseEstimator.addVisionMeasurement(
+                camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
         }
-
-        poseEstimator.update(m_gyro.getRotation2d(),
-                driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
+    
+    poseEstimator.update(m_gyro.getRotation2d(),
+        driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
 
         currentPose = poseEstimator.getEstimatedPosition();
         // System.out.println("In pose estimator subsystem");
+    
     }
 
     public String getFormattedPose() {
