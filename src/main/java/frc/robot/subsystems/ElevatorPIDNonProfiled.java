@@ -30,22 +30,24 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     public static final double kMaxAcceleration = 1.7; // meters per second squared
 
     private static final double kWheelRadius = 0.018191; // meters
-    private static final int kEncoderResolution = 2048; 
+    private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 6;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-    private static  final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+    private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
 
-    
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
     private final PIDController m_controller = new PIDController(12, 0, 0);
-    private final ProfiledPIDController m_profiledController = new ProfiledPIDController(12, 0, 0, new TrapezoidProfile.Constraints(1.57268, 22.1216));
-    private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
+    private final ProfiledPIDController m_profiledController = new ProfiledPIDController(12, 0, 0,
+            new TrapezoidProfile.Constraints(1.57268, 22.1216));
+    private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI,
+            ElevatorConstants.kD);
+    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS,
+            ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
     public boolean m_velocityControlEnabled = true;
 
@@ -62,7 +64,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
 
     private final ShuffleboardTab tab;
     /**
-     * Commented out because it kept causing duplicacy issues during runtime 
+     * Commented out because it kept causing duplicacy issues during runtime
      * (it's just duplicate entries)
      */
     private final GenericEntry elevatorEncoderPosition;
@@ -91,7 +93,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         setVelocitySetpoint(0);
         resetHeightAccumulator();
         m_controller.setTolerance(0.07, 0.1);
-        
+
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
         elevatorPosition = tab.add("Height", 0.0).getEntry();
@@ -116,14 +118,15 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     /*
-    * Convert from TalonFX elevator position in meters to native units and vice versa
-    */
+     * Convert from TalonFX elevator position in meters to native units and vice
+     * versa
+     */
     public double heightToNative(double heightUnits) {
         return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
     }
 
     public double nativeToHeight(double encoderUnits) {
-        
+
         return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
     }
 
@@ -152,7 +155,8 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public double getCurrentEncoderRate() {
-        return m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per
+                                                                                  // 100ms
     }
 
     public double getCurrentHeight() {
@@ -183,8 +187,8 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     /*
-    * Compute voltages using feedforward and pid
-    */
+     * Compute voltages using feedforward and pid
+     */
     @Override
     public void periodic() {
         // double m_error = m_controller.getSetpoint() - getCurrentHeight();
@@ -194,20 +198,21 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
         // System.out.println(m_velocityControlEnabled + " " + voltage);
-        //System.out.println("VOLTAGE " + voltage);
+        // System.out.println("VOLTAGE " + voltage);
         if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
             voltage = ElevatorConstants.kG;
 
         } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
-        } else if(LinearSlide.getInstance().getCurrentEncoderPosition() > 15000) {
-            voltage = ElevatorConstants.kG;}
-        // } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006) {
-            // voltage = ElevatorConstants.kG;
+        }
+        // } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006)
+        // {
+        // voltage = ElevatorConstants.kG;
         // }
 
         // System.out.println("Elevator : " + voltage);
-        m_voltageSetpoint = RebelUtil.constrain(voltage,-12, 12);
+        m_voltageSetpoint = RebelUtil.constrain(voltage, -12, 12);
+
         m_motor1.setVoltage(m_voltageSetpoint);
         m_motor2.setVoltage(m_voltageSetpoint);
 
@@ -219,5 +224,9 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     public void breakMotor() {
         m_motor1.stopMotor();
         m_motor2.stopMotor();
+    }
+
+    public boolean sufficientlyUp() {
+        return getCurrentHeight() > 0.6;
     }
 }

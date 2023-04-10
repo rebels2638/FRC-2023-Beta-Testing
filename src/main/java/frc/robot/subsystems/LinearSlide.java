@@ -46,8 +46,6 @@ public class LinearSlide extends SubsystemBase {
         pid.setTolerance(1000);
     }
 
-    
-
     // Singleton class, call getInstance to access instead of the constructor.
     public static LinearSlide getInstance() {
         if (instance == null) {
@@ -61,7 +59,8 @@ public class LinearSlide extends SubsystemBase {
     }
 
     public double getCurrentEncoderRate() {
-        return m_linslide.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_linslide.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per
+                                                                                    // 100ms
     }
 
     public void setPID(boolean on) {
@@ -73,10 +72,11 @@ public class LinearSlide extends SubsystemBase {
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
 
-        double pidVoltage = inPID ? (pid.atSetpoint() ? 0.0 : pid.calculate(getCurrentEncoderPosition())) : m_velocitySetpoint;
+        double pidVoltage = inPID ? (pid.atSetpoint() ? 0.0 : pid.calculate(getCurrentEncoderPosition()))
+                : m_velocitySetpoint;
         double feedforward = (pidVoltage == 0 ? 0 : pidVoltage < 0 ? -1 : 1) * kS;
         double percentOutput = feedforward + pidVoltage;
-        
+
         if (getCurrentEncoderPosition() >= kMaxEncoderLimit && percentOutput > 0.0) {
             percentOutput = 0.0;
         } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && percentOutput < 0.0) {
@@ -96,16 +96,20 @@ public class LinearSlide extends SubsystemBase {
     public void setGoal(double encoderGoal) {
         pid.setSetpoint(encoderGoal);
     }
-    
-    public boolean atGoal(){
+
+    public boolean atGoal() {
         return inPID ? pid.atSetpoint() : false;
     }
 
     public void zeroEncoder() {
         m_linslide.setSelectedSensorPosition(0);
     }
-    
+
     public void maxOutEncoder() {
         m_linslide.setSelectedSensorPosition(56000);
+    }
+
+    public boolean sufficientlyIn() {
+        return getCurrentEncoderPosition() < 15000;
     }
 }

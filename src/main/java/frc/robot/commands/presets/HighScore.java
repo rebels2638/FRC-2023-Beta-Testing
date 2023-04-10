@@ -1,5 +1,6 @@
 package frc.robot.commands.presets;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -16,13 +17,16 @@ import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 
-public class HighScore extends SequentialCommandGroup {
+public class HighScore extends ParallelCommandGroup {
 
     public HighScore() {
         addCommands(
-                new ParallelCommandGroup(
-                    new ParallelRaceGroup(new WristUp(Wrist.getInstance()), new TimerCommand(2)),
-                    new ParallelRaceGroup(new ElevatorUp(ElevatorPIDNonProfiled.getInstance()), new TimerCommand(2.5))),
-                new ParallelRaceGroup(new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()),new TimerCommand(4)));
+                new ParallelRaceGroup(new WristUp(Wrist.getInstance()), new TimerCommand(2)),
+                new ParallelRaceGroup(new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
+                        new TimerCommand(2.5)),
+                new ParallelRaceGroup(
+                        Commands.waitUntil(ElevatorPIDNonProfiled.getInstance()::sufficientlyUp).andThen(
+                            new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance())),
+                        new TimerCommand(4)));
     }
 }
