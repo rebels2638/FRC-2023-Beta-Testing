@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +30,8 @@ import frc.robot.commands.presets.HighScore;
 import frc.robot.commands.presets.Place;
 import frc.robot.commands.presets.TurtleMode;
 import frc.robot.commands.wrist.WristDown;
+import frc.robot.commands.wrist.WristStraight;
+import frc.robot.commands.wrist.WristTurtle;
 import frc.robot.commands.wrist.WristUp;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
@@ -60,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.pathplanner.lib.*;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
@@ -81,11 +85,13 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /* ElevatorPID.getInstance()*/));
         PATH_COMMANDS.put("elevatorUpLinSlideOut", new HighScore());
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new TurtleMode());
-        PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
+        PATH_COMMANDS.put("resetGyro", new InstantCommand(Navx.getInstance()::resetHeading));
         PATH_COMMANDS.put("autoPlace", new AutoPlace());
         PATH_COMMANDS.put("wristDown", new WristDown(Wrist.getInstance()));
         PATH_COMMANDS.put("clawUnpinch", new InstantCommand(Claw.getInstance()::push));
         PATH_COMMANDS.put("wristUp", new WristUp(Wrist.getInstance()));
+        PATH_COMMANDS.put("wristTurtle", new WristTurtle(Wrist.getInstance()));
+        PATH_COMMANDS.put("wristStraight", new WristStraight(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
         PATHS.put("taxi", "taxi");
@@ -99,6 +105,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
         PATHS.put("OneCubeAndTaxiOutNoBump2", "OneCubeAndTaxiOutNoBump2");
         PATHS.put("OneCubeAndTaxiOutBump2", "OneCubeAndTaxiOutBump2");
+        PATHS.put("TheEnd", "TheEnd");
 
         // IGNORE
         // PATHS.put("OneAndBack3Working", "OneAndBack3Working");
@@ -123,12 +130,13 @@ public final class AutoRunner extends SubsystemBase {
     private PoseEstimator m_poseEstimator;
 
     public AutoRunner() {
+        PathPlannerServer.startServer(AutoConstants.PATH_PLANNER_PORT);
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         pathChooser.setDefaultOption("taxi", "taxi");
         m_autoBuilder = new RamseteAutoBuilder(
                 m_poseEstimator::getCurrentPose,
-                m_poseEstimator::resetPose,
+                this::doLiterallyNothing,
                 new RamseteController(),
                 m_drive.m_kinematics,
                 m_drive.m_feedforward,
@@ -147,7 +155,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.forEach((pathName, pathFile) -> pathChooser.addOption(pathName, pathFile));
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
-        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()));
+        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()).ignoringDisable(true));
     }
 
     public static AutoRunner getInstance() {
@@ -168,7 +176,12 @@ public final class AutoRunner extends SubsystemBase {
     public void prepareForAuto() {
         lastPath = pathChooser.getSelected();
         loadPath();
-        RobotContainer.getInstance().resetForAuto(getPath().get(0).getInitialPose());
+        PathPlannerState initialState = getPath().get(0).getInitialState();
+        initialState =
+                  PathPlannerTrajectory.transformStateForAlliance(
+                      initialState, DriverStation.getAlliance());
+
+        RobotContainer.getInstance().resetForAuto(initialState.poseMeters);
     }
 
     public List<PathPlannerTrajectory> getPath() {
@@ -197,6 +210,8 @@ public final class AutoRunner extends SubsystemBase {
             JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
 
             isReversed = (boolean) (json.get("isReversed") == null ? false : json.get("isReversed"));
+            double defaultMaxVelo = (double) (json.get("maxVelocity") == null ? AutoConstants.kMaxSpeedMetersPerSecond : json.get("maxVelocity"));
+            double defaultMaxAccel = (double) (json.get("maxAcceleration") == null ? AutoConstants.kMaxAccelerationMetersPerSecondSquared : json.get("maxAcceleration"));
 
             JSONArray jsonWaypoints = (JSONArray) json.get("waypoints");
 
@@ -206,9 +221,9 @@ public final class AutoRunner extends SubsystemBase {
                 double constraint1 = (double) (waypoint1.get("velOverride") == null ? -1.0 : waypoint1.get("velOverride"));
                 double constraint2 =  (double) (waypoint2.get("velOverride") == null ? -1.0 : waypoint2.get("velOverride"));
                 if(constraint1 != -1.0 && constraint2 != 1.0) {
-                    constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
+                    constraints.add(new PathConstraints(Math.max(constraint1, constraint2), defaultMaxAccel));
                 } else {
-                    constraints.add(new PathConstraints(1.75, 0.8));
+                    constraints.add(new PathConstraints(defaultMaxVelo, defaultMaxAccel));
                 }
             }
             
@@ -221,5 +236,9 @@ public final class AutoRunner extends SubsystemBase {
 
     public Command getCommand() {
         return m_autoBuilder.fullAuto(m_path);
+    }
+
+    public void doLiterallyNothing(Pose2d pose) {
+        // literally nothing
     }
 }
