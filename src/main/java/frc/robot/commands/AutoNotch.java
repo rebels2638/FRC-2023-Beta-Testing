@@ -90,7 +90,6 @@ public class AutoNotch extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
     ChassisSpeeds adjustedSpeeds = controller.calculate(PoseEstimator.getInstance().getCurrentPose(), goalTrajectory.sample(startTime - Timer.getFPGATimestamp()));
     DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.m_kinematics.toWheelSpeeds(adjustedSpeeds);
     driveTrain.setSpeeds(wheelSpeeds);
@@ -104,10 +103,11 @@ public class AutoNotch extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return finished;
   }
 
   public Trajectory generateTrajectory() {
+
 
 
     Pose2d startPose = PoseEstimator.getInstance().getCurrentPose();
@@ -163,7 +163,10 @@ public class AutoNotch extends CommandBase {
 
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, endPose, config);
 
+      if (Math.sqrt( (endPose.getX() - startPose.getX()) * (endPose.getX() - startPose.getX()) + (endPose.getY() - startPose.getY()) * (endPose.getY() - startPose.getY())) > 1.5) {
+        finished = true;
+      }
     return trajectory;
 
   }
-    }
+}
