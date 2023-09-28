@@ -16,8 +16,8 @@ public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
-  private final double MAX_FORWARD_SPEED = 5;
-  private final double MAX_TURN_SPEED = 5;
+  private final double MAX_FORWARD_SPEED = 4;
+  private final double MAX_TURN_SPEED = 5.5;
   /**
    * Creates a new ExampleCommand.
    *
@@ -39,6 +39,8 @@ public class Drive extends CommandBase {
   public void execute() {
     double forwardSpeed = RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED;
     double turnSpeed = RebelUtil.linearDeadband(-xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED;
+    
+    // System.out.println("fw " + forwardSpeed + " turnspeed:" + turnSpeed);
     m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 

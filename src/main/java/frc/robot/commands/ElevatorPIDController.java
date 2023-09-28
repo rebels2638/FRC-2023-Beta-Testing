@@ -4,16 +4,20 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drivetrain;
+// import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorPID;
+import frc.robot.subsystems.ElevatorPIDNonProfiled;
+import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+// import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorPID m_elevatorPID;
+  private final ElevatorPIDNonProfiled m_elevatorPID;
+  // private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
   DigitalInput toplimitSwitch = new DigitalInput(2);
@@ -24,7 +28,7 @@ public class ElevatorPIDController extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorPIDController(ElevatorPID elevatorPIDSubsystem, XboxController controller) {
+  public ElevatorPIDController(ElevatorPIDNonProfiled elevatorPIDSubsystem,/*ElevatorPID elevatorPIDSubsystem,*/ XboxController controller) {
     e_controller = controller;
     m_elevatorPID = elevatorPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -33,32 +37,25 @@ public class ElevatorPIDController extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    // m_elevatorPID.setToVelocityControlMode(true);
+  }
+  
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    // double error = 0.0;
+    // if (e_controller.getLeftY() < 0.0) {error = -0.1;}
+    // else {error = 0.1;}
+
+    double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
     
-     double desiredHeight = e_controller.getLeftY();
-    
-    if (desiredHeight > 0) {
-        if (toplimitSwitch.get()) {
-            // We are going up and top limit is tripped so stop
-             m_elevatorPID.setSetpoint(0);
-        } else {
-            // We are going up but top limit is not tripped so go at commanded speed
-             m_elevatorPID.setSetpoint(desiredHeight);
-        }
-    } else {
-        if (bottomlimitSwitch.get()) {
-            // We are going down and bottom limit is tripped so stop
-             m_elevatorPID.setSetpoint(0);
-        } else {
-            // We are going down but bottom limit is not tripped so go at commanded speed
-             m_elevatorPID.setSetpoint(desiredHeight);
-        }
-    }
-  }
+    if(desiredVelo != 0) m_elevatorPID.setToVelocityControlMode(true);
+    m_elevatorPID.setVelocitySetpoint(desiredVelo);
+    //System.out.println("Controller: "+e_controller.getLeftY());
+  }   
 
   // Called once the command ends or is interrupted.
   @Override
@@ -67,6 +64,6 @@ public class ElevatorPIDController extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevatorPID.m_controller.atGoal();
+    return false;
   }
 }

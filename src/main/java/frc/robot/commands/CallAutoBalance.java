@@ -4,49 +4,33 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Claw;
-import frc.lib.input.XboxController;
-import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class ClawController extends CommandBase {
+public class CallAutoBalance extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Claw m_clawSubsystem;
-  private final XboxController e_controller; // e_controller is elevator's controller
-  private final DigitalInput linebreak;
-  private boolean lastLineBreak;
+  private final AutoBalance autoBalance;
+
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ClawController(Claw clawSubsystem, XboxController controller) {
-    e_controller = controller;
-    m_clawSubsystem = clawSubsystem;
-    linebreak = new DigitalInput(3);
-    lastLineBreak = false;
-
+  public CallAutoBalance(AutoBalance autoBalance) {
+    this.autoBalance = autoBalance;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_clawSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    autoBalance.schedule();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    
-    System.out.println("LINEBREAK: " + linebreak.get());
-    if (linebreak.get() && !lastLineBreak) {
-      m_clawSubsystem.pull();
-    }
-    lastLineBreak = linebreak.get();
-      
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -55,6 +39,6 @@ public class ClawController extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

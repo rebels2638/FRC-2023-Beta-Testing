@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,8 +34,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all 
-    m_robotContainer = new RobotContainer();
+    // CameraServer.startAutomaticCapture();
+    m_robotContainer = RobotContainer.getInstance();
     time = new Timer();
+    CommandScheduler.getInstance().enable();
   }
 
   /**
@@ -64,8 +69,9 @@ public class Robot extends TimedRobot {
     time.reset();
     time.start();
     
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_robotContainer.resetForAuto();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -90,7 +96,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotContainer.checkControllers();
+  }
 
   @Override
   public void testInit() {

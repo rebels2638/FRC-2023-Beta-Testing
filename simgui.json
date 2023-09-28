@@ -1,0 +1,64 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "Talon FX[13]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[13]/Fwd Limit": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[13]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[6]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arm/Zero Encoder": "Command",
+      "/Shuffleboard/Auto/Command": "String Chooser",
+      "/Shuffleboard/Auto/Load Path": "Command",
+      "/Shuffleboard/Auto/Path": "String Chooser",
+      "/Shuffleboard/Auto/ResetPoseEstimator": "Command",
+      "/Shuffleboard/Commands/Zero Elevator Position": "Command",
+      "/Shuffleboard/Drive/Zero Encoders": "Command",
+      "/Shuffleboard/Drive/Zero Gyro": "Command",
+      "/Shuffleboard/Drive/Zero Heading": "Command",
+      "/Shuffleboard/Elevator/Zero Encoder": "Command",
+      "/Shuffleboard/Encoders/Zero Encoder": "Command",
+      "/Shuffleboard/Linear Slide/Max Out Encoder": "Command",
+      "/Shuffleboard/Linear Slide/Zero Encoder": "Command",
+      "/Shuffleboard/Turret/Zero Encoder": "Command",
+      "/Shuffleboard/Wrist/Wrist Ready": "Command",
+      "/Shuffleboard/Wrist/Zero Encoder": "Command",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "Auto": {
+          "Command": {
+            "open": true
+          },
+          "Path": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      }
+    }
+  }
+}
