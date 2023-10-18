@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-import com.revrobotics.CANSparkMAX;
-import com.revrobotics.CANSparkMAXLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.RelativeEncoder;
 
@@ -37,8 +37,8 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     private static  final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
     
-    private final CANSparkMAX m_motor1 = new CANSparkMAX(1,MotorType.kBrushless); // TODO: change IDs
-    private final CANSparkMAX m_motor2 = new CANSparkMAX(2,MotorType.kBrushless);
+    private final CANSparkMax m_motor1 = new CANSparkMax(1,MotorType.kBrushless); // TODO: change IDs
+    private final CANSparkMax m_motor2 = new CANSparkMax(2,MotorType.kBrushless);
 
     private final PIDController m_controller = new PIDController(12, 0, 0);
     private final ProfiledPIDController m_profiledController = new ProfiledPIDController(12, 0, 0, new TrapezoidProfile.Constraints(1.57268, 22.1216));
@@ -63,24 +63,24 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
      * Commented out because it kept causing duplicacy issues during runtime 
      * (it's just duplicate entries)
      */
-    private final GenericEntry elevatorEncoderPosition;
-    private final GenericEntry elevatorPosition;
-    private final GenericEntry elevatorVelocity;
-    private final GenericEntry elevatorAcceleration;
-    private final GenericEntry elevatorPositionSetpoint;
+    private  final GenericEntry elevatorEncoderPosition;
+    private  final GenericEntry elevatorPosition;
+    private  final GenericEntry elevatorVelocity;
+    private  final GenericEntry elevatorAcceleration;
+    private  final GenericEntry elevatorPositionSetpoint;
     
-    private final GenericEntry elevatorVelocitySetpoint;
-    private final GenericEntry elevatorAccelerationSetpoint;
-    private final GenericEntry voltageSupplied;
-    private final GenericEntry voltageSetpoint;
+    private  final GenericEntry elevatorVelocitySetpoint;
+    private  final GenericEntry elevatorAccelerationSetpoint;
+    private  final GenericEntry voltageSupplied;
+    private  final GenericEntry voltageSetpoint;
 
-    public ElevatorPIDNonProfiled() {
+    public NeoElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
         m_motor2.setInverted(false);
 
         // reset elevator
-        m_motor1.setIdleMode(CANSparkMAX.IdelMode.kBrake);
-        m_motor2.setIdleMode(CANSparkMAX.IdelMode.kBrake);
+        m_motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        m_motor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
         zeroEncoder();
 
         // m_motor1.set(ControlMode.PercentOutput, 0); Hypothesis: You dont need these :pray:
@@ -107,9 +107,9 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
         zeroEncoder();
     }
 
-    public static ElevatorPIDNonProfiled getInstance() {
+    public static NeoElevatorPIDNonProfiled getInstance() {
         if (instance == null) {
-            instance = new ElevatorPIDNonProfiled();
+            instance = new NeoElevatorPIDNonProfiled();
         }
         return instance;
     }
@@ -148,11 +148,11 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public double getCurrentEncoderPosition() {
-        return m_motor1.getSensorCollection().getIntegratedSensorPosition();
+        return m_motor1.getEncoder().getPosition();
     }
 
     public double getCurrentEncoderRate() {
-        return m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_motor1.getEncoder(). * 10; // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentHeight() {
@@ -160,7 +160,7 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public double getCurrentVelocity() {
-        return nativeToHeight(getCurrentEncoderRate());
+        return m_motor1.getEncoder().getVelocity();
     }
 
     public double getCurrentAcceleration() {
