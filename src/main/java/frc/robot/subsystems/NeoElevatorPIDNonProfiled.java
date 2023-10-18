@@ -147,16 +147,12 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
         m_heightAccumulator = getCurrentHeight();
     }
 
-    public double getCurrentEncoderPosition() {
-        return m_motor1.getEncoder().getPosition();
-    }
-
     public double getCurrentEncoderRate() {
         return m_motor1.getEncoder(). * 10; // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentHeight() {
-        return nativeToHeight(getCurrentEncoderPosition());
+        return m_motor1.getEncoder().getPosition();
     }
 
     public double getCurrentVelocity() {
