@@ -217,7 +217,7 @@ public class FalconDrivetrain extends SubsystemBase {
     }
 
     tab.add("Zero Encoders", new InstantCommand(() -> zeroEncoder()));
-    tab.add("Zero Gyro", new InstantCommand(() -> zeroHeading()));
+    //tab.add("Zero Gyro", new InstantCommand(() -> zeroHeading()));
   }
 
   public static FalconDrivetrain getInstance() {
@@ -232,7 +232,7 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double nativeToMeters(double encoderUnits) {
-    return encoderUnits * kRotationsPerNativeUnit * (getPitch() > 0 ? kMetersPerRotationBack : kMetersPerRotationFront);
+    return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotationFront; //(/*getPitch() > 0 ? kMetersPerRotationBack : kMetersPerRotationFront);*/
   }
 
   public double getGearingRatio() {
@@ -306,15 +306,15 @@ public class FalconDrivetrain extends SubsystemBase {
     var kG = inHighGear ? kGHigh.getDouble(0.0) : kGLow.getDouble(0.0);
     var kGReal = 4.44;
     var kGDiff = -1.09;
-    var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
-    if (!isBalancing)
-      kGFinal *= -1;
-    if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
-      kGFinal = 0.0;
-    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond)
-        + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
-    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond)
-        + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+    // var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
+    // if (!isBalancing)
+    //   kGFinal *= -1;
+    // if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
+    // kGFinal = 0.0;
+    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+        // + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+        //+ kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
     double leftPID = m_leftPIDController
         .calculate(getLeftSideVelocity(), speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
@@ -333,7 +333,7 @@ public class FalconDrivetrain extends SubsystemBase {
     if (Robot.isSimulation())
       SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
 
-    m_fieldSim.setRobotPose(getPose());
+    //m_fieldSim.setRobotPose(getPose());
     SmartDashboard.putData("Field", m_fieldSim);
     SmartDashboard.putNumber("leftGroup Diff", nativeToMeters(getCurrentEncoderRate(m_leftLeader)));
     SmartDashboard.putNumber("rightGroup Diff", nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
@@ -354,10 +354,10 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVoltageSetpoint.setDouble(m_rightLeader.getMotorOutputVoltage());
     rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
 
-    gyroAngle.setDouble(getHeading());
-    gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());
+    //gyroAngle.setDouble(getHeading());
+    //gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());
 
-    poseString.setString(PoseEstimator.getInstance().getFormattedPose());
+    //poseString.setString(PoseEstimator.getInstance().getFormattedPose());
   }
 
   public void drive(double xSpeed, double rot) {
@@ -385,9 +385,9 @@ public class FalconDrivetrain extends SubsystemBase {
     return m_differentialDrivetrainSimulator.getCurrentDrawAmps();
   }
 
-  public Pose2d getPose() {
-    return PoseEstimator.getInstance().getCurrentPose();
-  }
+  // public Pose2d getPose() {
+  //   return PoseEstimator.getInstance().getCurrentPose();
+  // }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
@@ -415,27 +415,27 @@ public class FalconDrivetrain extends SubsystemBase {
     // m_gyroSim.setAngle(-m_differentialDrivetrainSimulator.getHeading().getDegrees());
   }
 
-  public void zeroHeading() {
-    // m_gyro.reset();
-    PoseEstimator.getInstance().resetHeading();
-  }
+  // public void zeroHeading() {
+  //   // m_gyro.reset();
+  //   PoseEstimator.getInstance().resetHeading();
+  // }
 
-  public double getHeading() {
-    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
-    return PoseEstimator.getInstance().getYaw();
-    // the GYRO is REVERSED.
-  }
+  // public double getHeading() {
+  //   // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
+  //   return PoseEstimator.getInstance().getYaw();
+  //   // the GYRO is REVERSED.
+  // }
 
-  public double getPitch() {
-    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
-    return PoseEstimator.getInstance().getPitch();
-    // the GYRO is REVERSED.
-  }
+  // public double getPitch() {
+  //   // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
+  //   return PoseEstimator.getInstance().getPitch();
+  //   // the GYRO is REVERSED.
+  // }
 
-  public Rotation2d getRotation2d() {
-    // return m_gyro.getRotation2d();
-    return PoseEstimator.getInstance().getCurrentPose().getRotation();
-  }
+  // public Rotation2d getRotation2d() {
+  //   // return m_gyro.getRotation2d();
+  //   return PoseEstimator.getInstance().getCurrentPose().getRotation();
+  // }
 
   /*
    * public void tankDriveVolts(double leftVolts, double rightVolts) {
@@ -445,19 +445,19 @@ public class FalconDrivetrain extends SubsystemBase {
    * }
    */
 
-  public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
-    var kGReal = 4.44;
-    var kGDiff = -1.09;
-    var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
-    if (!isBalancing)
-      kGFinal *= -1;
-    if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
-      kGFinal = 0.0;
-    m_leftGroup
-        .setVoltage(leftVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
-    m_rightGroup
-        .setVoltage(rightVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
-  }
+  // public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
+  //   var kGReal = 4.44;
+  //   var kGDiff = -1.09;
+  //   var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
+  //   if (!isBalancing)
+  //     kGFinal *= -1;
+  //   if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
+  //     kGFinal = 0.0;
+  //   m_leftGroup
+  //       .setVoltage(leftVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+  //   m_rightGroup
+  //       .setVoltage(rightVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+  // }
 
   public void switchToHighGear() {
     m_leftSolenoid.set(true);

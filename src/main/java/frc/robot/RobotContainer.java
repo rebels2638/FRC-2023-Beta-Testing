@@ -21,10 +21,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import frc.robot.commands.ElevatorCancel;
-import frc.robot.commands.AutoAlign;
+// import frc.robot.commands.AutoAlign;
 // import frc.robot.commands.ArmPositionSet;
 // import frc.robot.commands.ArmUp;
-import frc.robot.commands.AutoBalance;
+// import frc.robot.commands.AutoBalance;
 // import frc.robot.subsystems.ArmPID;
 // import frc.robot.commands.ArmPIDController;
 import frc.robot.commands.ElevatorDown;
@@ -40,10 +40,11 @@ import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.AutoRunner;
+//import frc.robot.subsystems.AutoRunner;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
-import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.NeoElevatorPIDNonProfiled;
+//import frc.robot.subsystems.PoseEstimator;
 // import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
@@ -65,7 +66,8 @@ import frc.robot.commands.ToPickup;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.subsystems.LinSlidePID;
-import frc.robot.commands.AutoNotch;
+import frc.robot.commands.NeoElevatorPIDController;
+// import frc.robot.commands.AutoNotch;
 
 import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
 import frc.robot.utils.ConstantsArmElevator.ArmConstants;
@@ -91,12 +93,13 @@ public class RobotContainer {
   private final Wrist wrist = Wrist.getInstance();
   // private final ElevatorPID elevatorFinal = ElevatorPID.getInstance();
   private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
+  private final NeoElevatorPIDNonProfiled elevatorFinalNeo = NeoElevatorPIDNonProfiled.getInstance();
   // private final Turret turret = Turret.getInstance();
   private final LinearSlide linslide = LinearSlide.getInstance();
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
-  private final AutoRunner auto = AutoRunner.getInstance();
+  // private final AutoRunner auto = AutoRunner.getInstance();
   // private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
 
   // private final Drivetrain drive = new Drivetrain();
@@ -123,7 +126,9 @@ public class RobotContainer {
     // Run a linslide in command to start the match
     // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
 
-    this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
+    //this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
+    this.elevatorFinal.setDefaultCommand(new NeoElevatorPIDController(elevatorFinalNeo, xboxOperator));
+
     // this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
     this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
@@ -140,15 +145,16 @@ public class RobotContainer {
     this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
 
     // toggle gear
-    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
-    this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
-    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
-    this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
-      new Place(),
-      new ElevatorDownLinSlideIn()));
-    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
-    this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
+    // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
+    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
+    // this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
+    // this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+    // this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
+    //   new Place(),
+    //   new ElevatorDownLinSlideIn()));
+    // this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
+    // this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
+
 
     // this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
     // this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
@@ -188,7 +194,7 @@ public class RobotContainer {
     // this.xboxOperator.getXButton().onTrue(new ElevatorDown(elevatorFinal));
 
     Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
-    Shuffleboard.getTab("Drive").add("Zero Heading", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
+    //Shuffleboard.getTab("Drive").add("Zero Heading", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
   }
 
   public static RobotContainer getInstance() {
@@ -205,13 +211,14 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-    auto.loadPath();
-    return auto.getCommand();
+    // auto.loadPath();
+    // return auto.getCommand();
+    return null;
   }
 
   public void resetForAuto() {
     // FalconDrivetrain.getInstance().zeroEncoder();
-    PoseEstimator.getInstance().resetPitchOffset();
+   // PoseEstimator.getInstance().resetPitchOffset();
     ElevatorPIDNonProfiled.getInstance().zeroEncoder();
     // ElevatorPID.getInstance().zeroEncoder();
     LinearSlide.getInstance().zeroEncoder();

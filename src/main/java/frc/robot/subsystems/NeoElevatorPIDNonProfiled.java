@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.RebelUtil;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -81,7 +82,10 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
         // reset elevator
         m_motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
         m_motor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        zeroEncoder();
+        //zeroEncoder();
+        m_motor1.getEncoder().setVelocityConversionFactor(kMetersPerRotation/60);
+        m_motor1.getEncoder().setPositionConversionFactor(kMetersPerRotation/60);
+
 
         // m_motor1.set(ControlMode.PercentOutput, 0); Hypothesis: You dont need these :pray:
         // m_motor2.set(ControlMode.PercentOutput, 0); TODO: change the command to instantiate an object of this instead
@@ -102,9 +106,9 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
         voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
-        tab.add("Zero Encoder",
-                new InstantCommand(() -> this.zeroEncoder()));
-        zeroEncoder();
+        // tab.add("Zero Encoder",
+        //         new InstantCommand(() -> this.zeroEncoder()));
+        // zeroEncoder();
     }
 
     public static NeoElevatorPIDNonProfiled getInstance() {
@@ -146,9 +150,9 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     public void resetHeightAccumulator() {
         m_heightAccumulator = getCurrentHeight();
     }
-
+    //This one is in RPM(Rotations Per Minute)
     public double getCurrentEncoderRate() {
-        return m_motor1.getEncoder(). * 10; // motor velocity is in ticks per 100ms
+        return m_motor1.getEncoder().getVelocity(); // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentHeight() {
@@ -156,24 +160,24 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public double getCurrentVelocity() {
-        return m_motor1.getEncoder().getVelocity();
+        return m_motor1.getEncoder().getVelocity();/* conversion factor */
     }
 
     public double getCurrentAcceleration() {
         return (getCurrentVelocity() - m_lastVelocity) / (Timer.getFPGATimestamp() - m_lastTime);
     }
 
-    public void zeroEncoder() {
-        m_motor1.getSensorCollection().setIntegratedSensorPosition(0, 30);
-        m_motor2.getSensorCollection().setIntegratedSensorPosition(0, 30);
-    }
+    // public void zeroEncoder() {
+    //     m_motor1.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    //     m_motor2.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    // }
 
     public void updateShuffleboard() {
-        elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
+        //elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
         elevatorPosition.setDouble(getCurrentHeight());
         elevatorVelocity.setDouble(getCurrentVelocity());
         elevatorAcceleration.setDouble(getCurrentAcceleration());
-        voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
+        //voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
         voltageSetpoint.setDouble(m_voltageSetpoint);
         elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
     }
