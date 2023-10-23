@@ -59,21 +59,21 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     private static double kUpperLimit = 0.75;
     private static double kLowerLimit = -0.2;
 
-    private final ShuffleboardTab tab;
+    // private final ShuffleboardTab tab;
     /**
      * Commented out because it kept causing duplicacy issues during runtime 
      * (it's just duplicate entries)
      */
-    private  final GenericEntry elevatorEncoderPosition;
-    private  final GenericEntry elevatorPosition;
-    private  final GenericEntry elevatorVelocity;
-    private  final GenericEntry elevatorAcceleration;
-    private  final GenericEntry elevatorPositionSetpoint;
+    // private  final GenericEntry elevatorEncoderPosition;
+    // private  final GenericEntry elevatorPosition;
+    // private  final GenericEntry elevatorVelocity;
+    // private  final GenericEntry elevatorAcceleration;
+    // private  final GenericEntry elevatorPositionSetpoint;
     
-    private  final GenericEntry elevatorVelocitySetpoint;
-    private  final GenericEntry elevatorAccelerationSetpoint;
-    private  final GenericEntry voltageSupplied;
-    private  final GenericEntry voltageSetpoint;
+    // private  final GenericEntry elevatorVelocitySetpoint;
+    // private  final GenericEntry elevatorAccelerationSetpoint;
+    // private  final GenericEntry voltageSupplied;
+    // private  final GenericEntry voltageSetpoint;
 
     public NeoElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
@@ -95,16 +95,16 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
         resetHeightAccumulator();
         m_controller.setTolerance(0.07, 0.1);
         
-        tab = Shuffleboard.getTab("Elevator");
-        elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
-        elevatorPosition = tab.add("Height", 0.0).getEntry();
-        elevatorVelocity = tab.add("Velocity", 0.0).getEntry();
-        elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
-        elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
-        elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
-        elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
-        voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
-        voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
+        // tab = Shuffleboard.getTab("Elevator");
+        // elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
+        // elevatorPosition = tab.add("Height", 0.0).getEntry();
+        // elevatorVelocity = tab.add("Velocity", 0.0).getEntry();
+        // elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
+        // elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
+        // elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
+        // elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
+        // voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
+        // voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         // tab.add("Zero Encoder",
         //         new InstantCommand(() -> this.zeroEncoder()));
@@ -172,15 +172,15 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     //     m_motor2.getSensorCollection().setIntegratedSensorPosition(0, 30);
     // }
 
-    public void updateShuffleboard() {
-        //elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
-        elevatorPosition.setDouble(getCurrentHeight());
-        elevatorVelocity.setDouble(getCurrentVelocity());
-        elevatorAcceleration.setDouble(getCurrentAcceleration());
-        //voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
-        voltageSetpoint.setDouble(m_voltageSetpoint);
-        elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
-    }
+    // public void updateShuffleboard() {
+    //     //elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
+    //     elevatorPosition.setDouble(getCurrentHeight());
+    //     elevatorVelocity.setDouble(getCurrentVelocity());
+    //     elevatorAcceleration.setDouble(getCurrentAcceleration());
+    //     //voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
+    //     voltageSetpoint.setDouble(m_voltageSetpoint);
+    //     elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
+    // }
     // public boolean isWithinTreshold(double height, double tolerance){
     //     if(Math.abs(getCurrentHeight() - height) < tolerance){
     //         return true;
@@ -219,7 +219,7 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
         m_motor1.setVoltage(m_voltageSetpoint);
         m_motor2.setVoltage(m_voltageSetpoint);
 
-        updateShuffleboard();
+        //updateShuffleboard();
         m_lastVelocity = getCurrentVelocity();
         m_lastTime = Timer.getFPGATimestamp();
     }

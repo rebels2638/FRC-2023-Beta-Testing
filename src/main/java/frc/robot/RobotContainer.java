@@ -40,12 +40,12 @@ import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.Arm;
-//import frc.robot.subsystems.AutoRunner;
+import frc.robot.subsystems.AutoRunner;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.NeoElevatorPIDNonProfiled;
 //import frc.robot.subsystems.PoseEstimator;
-// import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
@@ -99,17 +99,17 @@ public class RobotContainer {
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
-  // private final AutoRunner auto = AutoRunner.getInstance();
-  // private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
+  private final AutoRunner auto = AutoRunner.getInstance();
+  private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
 
-  // private final Drivetrain drive = new Drivetrain();
-  // private final Arm arm = Arm.getInstance();
-  // private final LinSlidePID linslidePID = new LinSlidePID();
-  // private final ArmPID armPID = new ArmPID();
-  // private final ElevatorPID elevatorPID = ElevatorPID.getInstance();
-  // DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL
-  // BREAK IT IF YOU DONT DO THIS
-  // private final Elevator elevator = new Elevator();
+  //private final Drivetrain drive = new Drivetrain();
+  private final Arm arm = Arm.getInstance();
+  private final LinSlidePID linslidePID = new LinSlidePID();
+  //private final ArmPID armPID = new ArmPID();
+  private final ElevatorPID elevatorPID = ElevatorPID.getInstance();
+  //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL
+  //BREAK IT IF YOU DONT DO THIS
+  private final Elevator elevator = new Elevator();
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -121,7 +121,7 @@ public class RobotContainer {
     this.xboxTester = new XboxController(1);
 
     // Controller Throttle Mappings
-    this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
+    //this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
 
     // Run a linslide in command to start the match
     // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
@@ -211,9 +211,8 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-    // auto.loadPath();
-    // return auto.getCommand();
-    return null;
+     auto.loadPath();
+     return auto.getCommand();
   }
 
   public void resetForAuto() {
