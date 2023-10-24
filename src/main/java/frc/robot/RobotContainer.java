@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
-import frc.robot.commands.ElevatorCancel;
+//import frc.robot.commands.ElevatorCancel;
 // import frc.robot.commands.AutoAlign;
 // import frc.robot.commands.ArmPositionSet;
 // import frc.robot.commands.ArmUp;
@@ -39,30 +40,30 @@ import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.AutoRunner;
+// import frc.robot.subsystems.Arm;
+//import frc.robot.subsystems.AutoRunner;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.NeoElevatorPIDNonProfiled;
 //import frc.robot.subsystems.PoseEstimator;
-import frc.robot.subsystems.PoseEstimator;
+//import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Wrist;
-import frc.robot.commands.WristController;
-import frc.robot.commands.WristDown;
-import frc.robot.commands.WristStraight;
-import frc.robot.commands.WristTurtle;
-import frc.robot.commands.WristUp;
+//import frc.robot.subsystems.Wrist;
+// import frc.robot.commands.WristController;
+// import frc.robot.commands.WristDown;
+//import frc.robot.commands.WristStraight;
+//import frc.robot.commands.WristTurtle;
+//import frc.robot.commands.WristUp;
 import frc.robot.commands.FieldOrientedDrive;
-import frc.robot.commands.ElevatorDownLinSlideIn;
-import frc.robot.commands.ElevatorGetFromLoading;
-import frc.robot.commands.ElevatorUpLinSlideOut;
+// import frc.robot.commands.ElevatorDownLinSlideIn;
+// import frc.robot.commands.ElevatorGetFromLoading;
+// import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinSlideToggle;
-import frc.robot.commands.MidScore;
-import frc.robot.commands.Place;
+//import frc.robot.commands.MidScore;
+//import frc.robot.commands.Place;
 import frc.robot.commands.TimerCommand;
-import frc.robot.commands.ToPickup;
+//import frc.robot.commands.ToPickup;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.subsystems.LinSlidePID;
@@ -90,26 +91,14 @@ public class RobotContainer {
   private final XboxController xboxOperator;
   private final XboxController xboxTester;
 
-  private final Wrist wrist = Wrist.getInstance();
-  // private final ElevatorPID elevatorFinal = ElevatorPID.getInstance();
-  private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
-  private final NeoElevatorPIDNonProfiled elevatorFinalNeo = NeoElevatorPIDNonProfiled.getInstance();
-  // private final Turret turret = Turret.getInstance();
-  private final LinearSlide linslide = LinearSlide.getInstance();
-  private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
+  // private final Wrist wrist = Wrist.getInstance();
+  private final NeoElevatorPIDNonProfiled elevatorFinal = NeoElevatorPIDNonProfiled.getInstance();
+  // private final LinearSlide linslide = LinearSlide.getInstance();
+  // private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
-  private final AutoRunner auto = AutoRunner.getInstance();
-  private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
+  // private final AutoRunner auto = AutoRunner.getInstance();
+  
 
-  //private final Drivetrain drive = new Drivetrain();
-  private final Arm arm = Arm.getInstance();
-  private final LinSlidePID linslidePID = new LinSlidePID();
-  //private final ArmPID armPID = new ArmPID();
-  private final ElevatorPID elevatorPID = ElevatorPID.getInstance();
-  //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL
-  //BREAK IT IF YOU DONT DO THIS
-  private final Elevator elevator = new Elevator();
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -127,22 +116,22 @@ public class RobotContainer {
     // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
 
     //this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
-    this.elevatorFinal.setDefaultCommand(new NeoElevatorPIDController(elevatorFinalNeo, xboxOperator));
+    this.elevatorFinal.setDefaultCommand(new NeoElevatorPIDController(elevatorFinal, xboxOperator));
 
     // this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
-    this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
-    this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
-        new Place(),
-        new ElevatorDownLinSlideIn()));
-    this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linslide, LinPiston));
+    // this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
+    // this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
+    //     new Place(),
+    //     new ElevatorDownLinSlideIn()));
+    // this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linslide, LinPiston));
 
     // presets
-    this.xboxOperator.getYButton().onTrue(new ElevatorGetFromLoading());
-    this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
-    this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
-    this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
-    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
+    // this.xboxOperator.getYButton().onTrue(new ElevatorGetFromLoading());
+    // this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
+    // this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
+    // this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
+    // this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
+    // this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
 
     // toggle gear
     // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
@@ -193,7 +182,7 @@ public class RobotContainer {
     // this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
     // this.xboxOperator.getXButton().onTrue(new ElevatorDown(elevatorFinal));
 
-    Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
+    //Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
     //Shuffleboard.getTab("Drive").add("Zero Heading", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
   }
 
@@ -211,8 +200,7 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-     auto.loadPath();
-     return auto.getCommand();
+     return new InstantCommand(() -> this.claw.toggle());
   }
 
   public void resetForAuto() {
@@ -220,15 +208,15 @@ public class RobotContainer {
    // PoseEstimator.getInstance().resetPitchOffset();
     ElevatorPIDNonProfiled.getInstance().zeroEncoder();
     // ElevatorPID.getInstance().zeroEncoder();
-    LinearSlide.getInstance().zeroEncoder();
-    Wrist.getInstance().turtleEncoder();
+    // LinearSlide.getInstance().zeroEncoder();
+    // Wrist.getInstance().turtleEncoder();
   }
 
   public void checkControllers() {
     // TODO: Uncomment this when we ensure deadband is high enough to not interfere with other commands
 
-    double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.2) * Wrist.kMaxSpeed;
-    if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
+    // double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.2) * Wrist.kMaxSpeed;
+    // if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
     
     // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
     // if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
