@@ -60,17 +60,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.pathplanner.lib.*;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.commands.FollowPathRamsete;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.commands.PathfindRamsete;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.controllers.PPRamseteController;
-import com.pathplanner.lib.path.PathConstraints;
-//import com.pathplanner.lib.server.PathPlannerServer;
-import com.pathplanner.lib.path.PathPlannerPath;
-//import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 public final class AutoRunner extends SubsystemBase {
     public static Command autoCommand;
@@ -85,8 +77,8 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("clawOpen", new Place());
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
-        PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance() /*  ElevatorPID.getInstance() */));
-        PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /* ElevatorPID.getInstance()*/));
+        //PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance()));
+        //PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance()));
         PATH_COMMANDS.put("elevatorUpLinSlideOut", new ElevatorUpLinSlideOut());
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new ElevatorDownLinSlideIn());
         PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
@@ -122,8 +114,7 @@ public final class AutoRunner extends SubsystemBase {
     public static List<PathPlannerTrajectory> m_path;
 
     public static AutoRunner instance = null;
-    private FollowPathWithEvents m_autoBuilder;
-    private PathfindRamsete m_PathfindRamsete;
+    private RamseteAutoBuilder m_autoBuilder;
     private Command m_autoCommand;
 
     private final SendableChooser<String> pathChooser = new SendableChooser<String>();
@@ -134,20 +125,18 @@ public final class AutoRunner extends SubsystemBase {
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         pathChooser.setDefaultOption("taxi", "taxi");
-                
-                // m_autoBuilder = new RamseteAutoBuilder(
-                // m_poseEstimator::getCurrentPose,
-                // m_poseEstimator::resetPose,
-                // new RamseteController(),
-                // m_drive.m_kinematics,
-                // m_drive.m_feedforward,
-                // m_drive::getWheelSpeeds,
-                // new PIDConstants(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
-                // m_drive::setVoltageFromAuto,
-                // PATH_COMMANDS,
-                // true
-                // m_drive);
-        // m_PathfindRamsete = new PathfindRamsete(, m_poseEstimator::resetPose, null, null, null, PATH_COMMANDS, null);
+        m_autoBuilder = new RamseteAutoBuilder(
+                m_poseEstimator::getCurrentPose,
+                m_poseEstimator::resetPose,
+                new RamseteController(),
+                m_drive.m_kinematics,
+                m_drive.m_feedforward,
+                m_drive::getWheelSpeeds,
+                new PIDConstants(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
+                m_drive::setVoltageFromAuto,
+                PATH_COMMANDS,
+                true,
+                m_drive);
 
         // do not uncomment this, we are not using pplib client and server
         // if you are to uncomment, change the server port along in the driver station
@@ -175,7 +164,6 @@ public final class AutoRunner extends SubsystemBase {
     public void loadPath() {
         loadPathString(pathChooser.getSelected());
         System.out.println(pathChooser.getSelected());
-        //m_autoCommand = new ();
     }
 
     public void loadPathString(String pathName) {
@@ -191,34 +179,32 @@ public final class AutoRunner extends SubsystemBase {
             }
 
             String fileContent = fileContentBuilder.toString();
-            
             JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
 
             isReversed = (boolean) json.get("isReversed");
 
             JSONArray jsonWaypoints = (JSONArray) json.get("waypoints");
 
-            // for (int i = 0; i < jsonWaypoints.size() - 1; i++) {
-            //     JSONObject waypoint1 = (JSONObject) jsonWaypoints.get(i);
-            //     JSONObject waypoint2 = (JSONObject) jsonWaypoints.get(i + 1);
-            //     double constraint1 = (double) (waypoint1.get("velOverride") == null ? -1.0 : waypoint1.get("velOverride"));
-            //     double constraint2 =  (double) (waypoint2.get("velOverride") == null ? -1.0 : waypoint2.get("velOverride"));
-            //     if(constraint1 != -1.0 && constraint2 != 1.0) {
-            //         constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
-            //     } else {
-            //         constraints.add(new PathConstraints(1.5, 0.75));
-            //     }
-            // }
+            for (int i = 0; i < jsonWaypoints.size() - 1; i++) {
+                JSONObject waypoint1 = (JSONObject) jsonWaypoints.get(i);
+                JSONObject waypoint2 = (JSONObject) jsonWaypoints.get(i + 1);
+                double constraint1 = (double) (waypoint1.get("velOverride") == null ? -1.0 : waypoint1.get("velOverride"));
+                double constraint2 =  (double) (waypoint2.get("velOverride") == null ? -1.0 : waypoint2.get("velOverride"));
+                if(constraint1 != -1.0 && constraint2 != 1.0) {
+                    constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
+                } else {
+                    constraints.add(new PathConstraints(1.5, 0.75));
+                }
+            }
             
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.75, 0.8));
-        // m_path = PathPlanner.loadPathGroup(pathName, isReversed, constraints.get(0), constraints.subList(1, constraints.size()).toArray(PathConstraints[]::new));
+
+        m_path = PathPlanner.loadPathGroup(pathName, isReversed, constraints.get(0), constraints.subList(1, constraints.size()).toArray(PathConstraints[]::new));
     }
 
     public Command getCommand() {
-        // return m_autoBuilder.fullAuto(m_path);
-        return m_autoCommand;
+        return m_autoBuilder.fullAuto(m_path);
     }
 }
