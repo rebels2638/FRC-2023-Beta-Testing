@@ -16,5 +16,5 @@ public class AutoConstants {
     public static final double kRamseteB = 1.0;
     public static final double kRamseteZeta = 1.0;
 
-    public static final Map<String, Command> AUTO_EVENT_MAP = new HashMap<String, Command>();
+    //public static final Map<String, Command> AUTO_EVENT_MAP = new HashMap<String, Command>();
 }

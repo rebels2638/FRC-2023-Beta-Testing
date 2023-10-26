@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import java.util.Optional;
+//import java.util.Optional;
 // import org.photonvision.*;
 
 /** Represents a differential drive style drivetrain. */

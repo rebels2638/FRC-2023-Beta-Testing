@@ -28,9 +28,9 @@ import frc.lib.input.XboxController;
 // import frc.robot.commands.AutoBalance;
 // import frc.robot.subsystems.ArmPID;
 // import frc.robot.commands.ArmPIDController;
-import frc.robot.commands.ElevatorDown;
-import frc.robot.commands.ElevatorPIDController;
-import frc.robot.commands.ElevatorUp;
+// import frc.robot.commands.ElevatorDown;
+// import frc.robot.commands.ElevatorPIDController;
+// import frc.robot.commands.ElevatorUp;
 import frc.robot.commands.FalconDrive;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
@@ -42,12 +42,12 @@ import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
 // import frc.robot.subsystems.Arm;
 //import frc.robot.subsystems.AutoRunner;
-import frc.robot.commands.TurretController;
+// import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.NeoElevatorPIDNonProfiled;
 //import frc.robot.subsystems.PoseEstimator;
 //import frc.robot.subsystems.PoseEstimator;
-import frc.robot.subsystems.Turret;
+//import frc.robot.subsystems.Turret;
 //import frc.robot.subsystems.Wrist;
 // import frc.robot.commands.WristController;
 // import frc.robot.commands.WristDown;
@@ -59,13 +59,13 @@ import frc.robot.commands.FieldOrientedDrive;
 // import frc.robot.commands.ElevatorGetFromLoading;
 // import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
-import frc.robot.commands.LinSlideToggle;
+// import frc.robot.commands.LinSlideToggle;
 //import frc.robot.commands.MidScore;
 //import frc.robot.commands.Place;
 import frc.robot.commands.TimerCommand;
 //import frc.robot.commands.ToPickup;
-import frc.robot.commands.LinSlideFullyIn;
-import frc.robot.commands.LinSlideFullyOut;
+// import frc.robot.commands.LinSlideFullyIn;
+// import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.commands.NeoElevatorPIDController;
 // import frc.robot.commands.AutoNotch;
@@ -200,13 +200,14 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-     return new InstantCommand(() -> this.claw.toggle());
+    //return null;
+    return new InstantCommand(() -> this.claw.toggle());
   }
 
   public void resetForAuto() {
     // FalconDrivetrain.getInstance().zeroEncoder();
    // PoseEstimator.getInstance().resetPitchOffset();
-    ElevatorPIDNonProfiled.getInstance().zeroEncoder();
+    //ElevatorPIDNonProfiled.getInstance().zeroEncoder();
     // ElevatorPID.getInstance().zeroEncoder();
     // LinearSlide.getInstance().zeroEncoder();
     // Wrist.getInstance().turtleEncoder();

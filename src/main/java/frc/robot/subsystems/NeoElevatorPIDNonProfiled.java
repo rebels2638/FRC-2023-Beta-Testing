@@ -30,7 +30,7 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     public static final double kMaxAcceleration = 1.7; // meters per second squared
 
     private static final double kWheelRadius = 0.018191; // meters
-    private static final int kEncoderResolution = 2048; 
+    private static final int kEncoderResolution = 42; //2048
     private static final int kGearingRatio = 6;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
@@ -38,8 +38,8 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     private static  final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
     
-    private final CANSparkMax m_motor1 = new CANSparkMax(1,MotorType.kBrushless); // TODO: change IDs
-    private final CANSparkMax m_motor2 = new CANSparkMax(2,MotorType.kBrushless);
+    private final CANSparkMax m_motor1 = new CANSparkMax(0,MotorType.kBrushless); // TODO: change IDs
+    private final CANSparkMax m_motor2 = new CANSparkMax(1,MotorType.kBrushless);
 
     private final PIDController m_controller = new PIDController(12, 0, 0);
     private final ProfiledPIDController m_profiledController = new ProfiledPIDController(12, 0, 0, new TrapezoidProfile.Constraints(1.57268, 22.1216));
@@ -181,14 +181,14 @@ public class NeoElevatorPIDNonProfiled extends SubsystemBase {
     //     voltageSetpoint.setDouble(m_voltageSetpoint);
     //     elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
     // }
-    // public boolean isWithinTreshold(double height, double tolerance){
-    //     if(Math.abs(getCurrentHeight() - height) < tolerance){
-    //         return true;
-    //     }
-    //     else{
-    //     return false;
-    //     }
-    // }
+    public boolean isWithinTreshold(double height, double tolerance){
+        if(Math.abs(getCurrentHeight() - height) < tolerance){
+            return true;
+        }
+        else{
+        return false;
+        }
+    }
 
     /*
     * Compute voltages using feedforward and pid

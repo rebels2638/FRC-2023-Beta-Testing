@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 // import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ElevatorPID;
-import frc.robot.subsystems.ElevatorPIDNonProfiled;
+//import frc.robot.subsystems.ElevatorPID;
+//import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -51,7 +51,7 @@ public class NeoElevatorPIDController extends CommandBase {
     // if (e_controller.getLeftY() < 0.0) {error = -0.1;}
     // else {error = 0.1;}
 
-    double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
+    double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * 1.5;
     
     if(desiredVelo != 0) m_elevatorPID.setToVelocityControlMode(true);
     m_elevatorPID.setVelocitySetpoint(desiredVelo);
