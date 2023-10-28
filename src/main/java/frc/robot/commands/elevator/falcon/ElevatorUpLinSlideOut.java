@@ -13,7 +13,7 @@ import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 
-import frc.robot.commands.ElevatorCancel;
+import frc.robot.commands.elevator.falcon.ElevatorCancel;
 
 public class ElevatorUpLinSlideOut extends SequentialCommandGroup {
 

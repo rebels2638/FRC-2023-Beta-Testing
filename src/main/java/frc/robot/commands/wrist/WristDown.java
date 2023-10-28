@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.wrist;
 
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -6,16 +6,16 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class WristReady extends CommandBase {
+public class WristDown extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Wrist m_armSubsystem;
 
 //   private final double kHeightUpPosition = 0.381; // meters
 //   private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
   
-  private final double goalAngle = Math.PI * (4.0 / 7.0); // radians
+  private final double goalAngle = -0.49; // radians
 
-  public WristReady(Wrist subsystem) {
+  public WristDown(Wrist subsystem) {
     m_armSubsystem = subsystem;
     
     addRequirements(subsystem);

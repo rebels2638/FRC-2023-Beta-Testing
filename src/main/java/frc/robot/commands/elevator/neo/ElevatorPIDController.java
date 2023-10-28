@@ -2,11 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.elevator.falcon;
+package frc.robot.commands.elevator.neo;
 
 // import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorPID;
-import frc.robot.subsystems.ElevatorPIDNonProfiled;
+import frc.robot.subsystems.NeoElevatorPIDNonProfiled;
 
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 /** An example command that uses an example subsystem. */
 public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorPIDNonProfiled m_elevatorPID;
+  private final NeoElevatorPIDNonProfiled m_elevatorPID;
   // private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
@@ -30,7 +30,7 @@ public class ElevatorPIDController extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorPIDController(ElevatorPIDNonProfiled elevatorPIDSubsystem,/*ElevatorPID elevatorPIDSubsystem,*/ XboxController controller) {
+  public ElevatorPIDController(NeoElevatorPIDNonProfiled elevatorPIDSubsystem,/*ElevatorPID elevatorPIDSubsystem,*/ XboxController controller) {
     e_controller = controller;
     m_elevatorPID = elevatorPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.

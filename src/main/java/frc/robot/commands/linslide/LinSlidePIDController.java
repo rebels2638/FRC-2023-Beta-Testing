@@ -2,12 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.linslide;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LinSlidePID;
+
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;

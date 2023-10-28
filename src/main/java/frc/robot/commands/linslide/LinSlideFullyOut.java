@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.linslide;
 
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.ElevatorPID;

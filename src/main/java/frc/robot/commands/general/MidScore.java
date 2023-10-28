@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.general;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,8 +13,8 @@ import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 
-import frc.robot.commands.ElevatorCancel;
-import frc.robot.commands.elevator.neo.WristStraight;
+import frc.robot.commands.elevator.neo.ElevatorCancel;
+import frc.robot.commands.wrist.WristStraight;
 
 public class MidScore extends SequentialCommandGroup {
     public MidScore() {

@@ -1,10 +1,12 @@
-package frc.robot.commands;
+package frc.robot.commands.linslide;
 
 import frc.lib.input.XboxController;
+
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;

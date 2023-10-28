@@ -1,21 +1,22 @@
-package frc.robot.commands;
+package frc.robot.commands.wrist;
 
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.ExampleSubsystem;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class WristStraight extends CommandBase {
+public class WristTurtle extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Wrist m_armSubsystem;
 
 //   private final double kHeightUpPosition = 0.381; // meters
 //   private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
   
-  private final double goalAngle = 0; // radians
+  private final double goalAngle = Math.PI * (1.0 / 2.0); // radians
 
-  public WristStraight(Wrist subsystem) {
+  public WristTurtle(Wrist subsystem) {
     m_armSubsystem = subsystem;
     
     addRequirements(subsystem);
@@ -36,7 +37,6 @@ public class WristStraight extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("Ended");
     m_armSubsystem.setToVelocityControlMode(true);
     m_armSubsystem.setVelocitySetpoint(0.0);
   }
@@ -44,7 +44,6 @@ public class WristStraight extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    
     return m_armSubsystem.atGoal() || m_armSubsystem.m_velocityControlEnabled;
   }
 }

@@ -1,7 +1,7 @@
-package frc.robot.commands.elevator.falcon;
+package frc.robot.commands.elevator.neo;
 
 import frc.robot.subsystems.ElevatorPID;
-import frc.robot.subsystems.ElevatorPIDNonProfiled;
+import frc.robot.subsystems.NeoElevatorPIDNonProfiled;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FalconDrivetrain;
 
@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class ElevatorMid extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   // private final ElevatorPID m_elevatorSubsystem;
-  private final ElevatorPIDNonProfiled m_elevatorSubsystem;
+  private final NeoElevatorPIDNonProfiled m_elevatorSubsystem;
 
   private final double kHeightMidPosition = 0.42; // meters
 
-  public ElevatorMid(ElevatorPIDNonProfiled subsystem /*ElevatorPID subsystem*/) {
+  public ElevatorMid(NeoElevatorPIDNonProfiled subsystem /*ElevatorPID subsystem*/) {
     m_elevatorSubsystem = subsystem;
     
     addRequirements(subsystem);
